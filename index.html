@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#e9f1e5"><title>Slime Shift · Little slime, big adventure</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%235ac876' d='M5 48C5 18 18 8 32 8s27 10 27 40Q32 64 5 48'/%3E%3Ccircle cx='23' cy='32' r='4'/%3E%3Ccircle cx='42' cy='32' r='4'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <section id="loading" class="screen" aria-label="Loading game"><div class="panel"><span class="tiny-blob" aria-hidden="true"></span><p role="status">Loading adventure…</p></div></section>
+  <canvas id="game" aria-label="Slime Shift. A and D move, W or Space jumps. Pull back and release to throw a teleport ball."></canvas>
+  <header id="hud" hidden>
+    <div class="level-info"><span class="wordmark">slime<span>shift</span><i></i></span><div class="level-line"><span id="levelName"></span><nav id="dots" aria-label="Level progress"></nav></div></div>
+    <div class="tools"><span id="timer" class="timer" aria-label="Level time">0:00.00</span><span class="shot-count"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 17C5 8 8 4 12 4s7 4 7 13Q12 21 5 17Z"/></svg><b id="shotCount">0</b></span><button id="restart" class="icon" aria-label="Restart level" title="Restart (R)">↻</button><button id="pause" class="icon" aria-label="Pause" title="Pause (Esc)">Ⅱ</button></div>
+  </header>
+  <div id="hint" hidden><span id="hintText"></span><small id="lesson"></small></div>
+  <div id="tutorial" hidden><span id="tutorialTitle" role="status" aria-live="polite"></span><p id="tutorialText"></p><div id="tutorialKeys" aria-hidden="true"></div></div>
+  <div id="transition" aria-hidden="true"></div>
+  <div id="touchControls" hidden aria-label="Movement controls">
+    <div class="touch-move"><button data-control="left" aria-label="Move left">←</button><button data-control="right" aria-label="Move right">→</button></div>
+    <button data-control="jump" aria-label="Jump">↑</button>
+  </div>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <section id="welcome" class="screen">
+    <div class="intro">
+      <div class="eyebrow"><span></span> LITTLE SLIME. BIG ADVENTURE.</div>
+      <h1>slime<br><em>shift.</em></h1>
+      <p>A little hop. A clever throw.<br>A whole world on the other side.</p>
+      <button id="play" class="primary">Continue <span>↗</span></button>
+      <div class="home-actions"><button id="worlds" class="secondary">Explore worlds</button><button id="leaderboard" class="secondary">Top times ↗</button></div>
+      <button id="replayTutorial" class="text-button">Play the tutorial</button>
+    </div>
+    <div class="welcome-tag"><span class="tiny-blob"></span><span id="adventureCount"></span></div>
+  </section>
+  <section id="menu" class="screen veil" hidden role="dialog" aria-modal="true" aria-labelledby="menuTitle">
+    <div class="panel"><span class="eyebrow">TAKE A BREATHER</span><h2 id="menuTitle">No rush.</h2><button id="resume" class="primary">Keep leaping <span>↗</span></button><button id="menuRestart" class="secondary">Restart this level</button><div id="levelSelect" class="level-select"></div><div class="settings"><button id="menuWorlds" class="secondary">Worlds</button><button id="menuHome" class="secondary">Home</button></div><div class="settings"><button id="sound" class="secondary">Sound on</button><button id="motion" class="secondary">Motion on</button></div><p class="control-note">A / D move · W / Space jump · S squish<br>Pull back, release to throw. Aim anywhere.<br>R restart · Esc pause · Right-click cancels aim</p></div>
+  </section>
+  <section id="result" class="screen veil" hidden role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+    <div class="panel result-panel"><div id="resultMedal" class="result-mark">✦</div><span id="resultEyebrow" class="eyebrow">A NICE LITTLE LEAP</span><h2 id="resultTitle">Beautiful landing.</h2><p id="resultStats"></p><div id="worldTime" hidden></div><button id="next" class="primary">Next adventure <span>↗</span></button><button id="again" class="secondary">Try a cleaner route</button><button id="resultLeaderboard" class="secondary" hidden>Post world time ↗</button></div>
+  </section>
+  <section id="worldScreen" class="screen veil" hidden role="dialog" aria-modal="true" aria-labelledby="worldTitle"><div class="world-panel"><div class="panel-heading"><div><span class="eyebrow">THE LITTLE ATLAS</span><h2 id="worldTitle">Where to next?</h2></div><button id="closeWorlds" class="icon" aria-label="Close worlds">×</button></div><div id="worldGrid"></div><p class="atlas-note">Explore any world. Complete every level in order for a ranked world time.</p></div></section>
+  <section id="journeyScreen" class="screen" hidden aria-label="Adventure map">
+    <div class="journey-heading"><span id="journeyEyebrow" class="eyebrow">YOUR LITTLE ADVENTURE</span><h2 id="journeyTitle">Where to next?</h2><p id="journeyStats"></p></div>
+    <div id="journeyNodes" class="journey-nodes" aria-label="Choose a numbered level"></div>
+    <button id="previousWorld" class="world-arrow" aria-label="Previous world">‹</button>
+    <button id="nextWorld" class="world-arrow" aria-label="Next world">›</button>
+    <div class="journey-tools"><button id="holdJourney" class="secondary">Stay on map</button><button id="closeJourney" class="icon" aria-label="Close adventure map">×</button></div>
+    <div class="journey-navigation"><div class="world-pagination"><nav id="journeyPager" aria-label="Choose a world"></nav><span id="journeyWorldNumber"></span></div><small>Swipe to explore</small></div>
+    <div class="journey-bottom"><span id="journeyDetail"></span><button id="journeyPlay" class="primary">Play this level <span>↗</span></button></div>
+  </section>
+  <section id="boardScreen" class="screen veil" hidden role="dialog" aria-modal="true" aria-labelledby="boardTitle"><div class="board-panel"><div class="panel-heading"><div><span class="eyebrow">A FRIENDLY LITTLE RACE</span><h2 id="boardTitle">Top times.</h2></div><button id="closeBoard" class="icon" aria-label="Close leaderboard">×</button></div><label class="board-select">World <select id="boardWorld"></select></label><p class="board-scope">Local preview server · fastest complete world runs · Top 10</p><ol id="boardRows"></ol><p id="boardStatus" role="status" aria-live="polite"></p><form id="scoreForm" hidden><label>Your name <input id="playerName" maxlength="16" minlength="2" autocomplete="nickname" required placeholder="Little slime"></label><button class="primary" id="postScore" type="submit">Post my time <span>↗</span></button><p id="scoreTime"></p></form></div></section>
+  <section id="rotate" hidden><div class="phone-shape">↻</div><h2>Turn your phone</h2><p>A little more room for big leaps.</p></section>
+  <section id="adStatus" class="screen veil" hidden aria-label="Game paused for platform break"><div class="panel"><h2>A little breather.</h2><p role="status">Your game will continue after the break.</p></div></section>
+  <script type="module" src="game.js"></script>
+</body>
+</html>
